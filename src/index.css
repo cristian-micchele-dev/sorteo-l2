@@ -1,0 +1,278 @@
+@import 'tailwindcss';
+
+@theme {
+  /* Paleta Lineage 2: obsidiana, acero, oro adena y sangre. */
+  --color-obsidian: #080706;
+  --color-abyss: #100e0c;
+  --color-forge: #1a1613;
+  --color-steel: #322c25;
+  --color-iron: #4a4238;
+  --color-parchment: #e9e0ca;
+  --color-ash: #9a9086;
+  --color-adena: #c9a227;
+  --color-adena-bright: #f2cf58;
+  --color-blood: #8b1a1a;
+  --color-crimson: #c0282d;
+  --color-ember: #e0592c;
+
+  --font-display: 'Cinzel', 'Georgia', serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-obsidian text-parchment font-body antialiased;
+  }
+
+  /*
+   * El cursor del juego, en todo. El hotspot va explícito (6,5) para no
+   * depender de que el navegador lea el que trae embebido el .cur.
+   *
+   * Va sobre `*` y no sólo sobre body porque varios elementos (botones,
+   * selects) traen su propio cursor en los estilos del navegador.
+   */
+  *,
+  *::before,
+  *::after {
+    cursor: url('/l2-cursor.cur') 6 5, auto;
+  }
+
+  /*
+   * Sobre lo clickeable, el cursor de ataque — que es justo lo que se pierde
+   * al pisar la manito del sistema: el aviso de "acá se puede hacer algo".
+   * `:enabled` deja afuera a los botones apagados, que tienen su propio
+   * cursor de prohibido.
+   */
+  button:enabled,
+  [role='button'],
+  a[href],
+  select:enabled,
+  summary {
+    cursor: url('/l2-cursor-attack.cur') 4 0, pointer;
+  }
+
+  /* El cursor de texto SÍ se conserva: marca dónde vas a escribir. */
+  input,
+  textarea {
+    cursor: text;
+  }
+
+  /*
+   * El wallpaper va en un pseudo-elemento fijo en vez de background-attachment:
+   * fixed, que en móvil obliga a repintar en cada scroll.
+   *
+   * El velo es suave porque esta imagen ya nace oscura: sólo hace falta bajarle
+   * el sepia para que el texto claro de los paneles respire.
+   */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(ellipse 75% 60% at 50% 45%, transparent, rgba(8, 7, 6, 0.38)),
+      linear-gradient(
+        to bottom,
+        rgba(8, 7, 6, 0.62) 0%,
+        rgba(8, 7, 6, 0.42) 40%,
+        rgba(8, 7, 6, 0.5) 75%,
+        rgba(8, 7, 6, 0.82) 100%
+      ),
+      url('/l2-bg.jpg') center / cover no-repeat;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-abyss);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-steel);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-iron);
+  }
+}
+
+@layer components {
+  /*
+   * En una ruleta los nombres GIRAN con sus sectores, así que alcanza con
+   * rotar el plato entero: una sola transición, sin contra-rotaciones.
+   * La curva frena fuerte al final, como una rueda que pierde inercia.
+   */
+  .wheel {
+    /* La duración llega inline desde SPIN_DURATION_MS. */
+    transition-property: transform;
+    transition-timing-function: cubic-bezier(0.12, 0.85, 0.05, 1);
+    transform-origin: center;
+    will-change: transform;
+  }
+
+  /*
+   * Brillo que recorre las letras doradas, como la luz sobre metal pulido.
+   * El texto se pinta con el degradado (background-clip: text) y lo que se
+   * anima es la POSICIÓN del degradado, no el color: una sola propiedad
+   * compuesta, sin repintar texto en cada frame.
+   */
+  .title-sheen {
+    background-image: linear-gradient(
+      100deg,
+      var(--color-adena) 0%,
+      var(--color-adena) 38%,
+      #fff4cc 47%,
+      var(--color-adena-bright) 53%,
+      var(--color-adena) 62%,
+      var(--color-adena) 100%
+    );
+    background-size: 260% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gold-sheen 6500ms ease-in-out infinite;
+  }
+
+  /*
+   * El recorte del líder trae piso de piedra pegado. La máscara disuelve los
+   * bordes para que quede flotando sobre el anuncio en vez de aparecer
+   * dentro de un rectángulo con fondo ajeno.
+   */
+  .leader-cutout {
+    /*
+     * El gradiente va en BLANCO, no en negro. Según el navegador, la máscara
+     * se interpreta por alfa o por luminancia: con alfa da igual el color,
+     * pero con luminancia el negro vale cero y la imagen DESAPARECE entera.
+     * El blanco es correcto en los dos casos.
+     */
+    -webkit-mask-image: radial-gradient(ellipse 58% 62% at 50% 50%, #fff 58%, transparent 100%);
+    mask-image: radial-gradient(ellipse 58% 62% at 50% 50%, #fff 58%, transparent 100%);
+  }
+}
+
+@keyframes muzzle-flash {
+  0% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  12% {
+    opacity: 1;
+    transform: scale(1.35);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.1);
+  }
+}
+
+@keyframes winner-slam {
+  0% {
+    opacity: 0;
+    transform: scale(1.6);
+    filter: blur(6px);
+  }
+  55% {
+    opacity: 1;
+    transform: scale(0.96);
+    filter: blur(0);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes ember-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-blood) 55%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 28px 6px color-mix(in srgb, var(--color-blood) 30%, transparent);
+  }
+}
+
+@keyframes gold-sheen {
+  0% {
+    background-position: 190% center;
+  }
+  55%,
+  100% {
+    background-position: -90% center;
+  }
+}
+
+/* El escudo respira: sube dos píxeles y el halo dorado se abre. */
+@keyframes crest-breathe {
+  0%,
+  100% {
+    transform: translateY(0);
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.8));
+  }
+  50% {
+    transform: translateY(-3px);
+    filter: drop-shadow(0 3px 12px color-mix(in srgb, var(--color-adena) 50%, transparent));
+  }
+}
+
+@keyframes leader-bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1.5deg);
+  }
+  50% {
+    transform: translateY(-11px) rotate(1.5deg);
+  }
+}
+
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@utility animate-flash {
+  animation: muzzle-flash 700ms ease-out forwards;
+}
+@utility animate-slam {
+  animation: winner-slam 520ms cubic-bezier(0.2, 1.4, 0.3, 1) forwards;
+}
+@utility animate-ember {
+  animation: ember-pulse 2400ms ease-in-out infinite;
+}
+@utility animate-enter {
+  animation: slide-in 260ms ease-out both;
+}
+@utility animate-overlay {
+  animation: overlay-in 220ms ease-out both;
+}
+@utility animate-bob {
+  animation: leader-bob 2800ms ease-in-out infinite;
+}
+@utility animate-crest {
+  animation: crest-breathe 4200ms ease-in-out infinite;
+}
+
+/* Quien pidió menos movimiento no ve girar nada: el resultado es el mismo. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}
