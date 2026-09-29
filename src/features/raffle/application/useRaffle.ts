@@ -14,7 +14,7 @@ import { loadRaffle, saveRaffle } from './raffleStorage'
  * transición CSS de la rueda, que la recibe inline: un solo número, sin
  * riesgo de que el reloj y la animación se desincronicen.
  */
-export const SPIN_DURATION_MS = 1700
+export const SPIN_DURATION_MS = 2400
 
 const prefersReducedMotion = (): boolean =>
   globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false
