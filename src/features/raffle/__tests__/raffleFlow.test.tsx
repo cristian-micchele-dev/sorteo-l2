@@ -153,6 +153,52 @@ describe('flujo completo del sorteo', () => {
     expect(screen.getByRole('button', { name: /girar la ruleta/i })).toBeEnabled()
   })
 
+  const openRoster = () => fireEvent.click(screen.getByRole('button', { name: /roster/i }))
+
+  const loadRoster = (names: string) => {
+    openRoster()
+    fireEvent.change(screen.getByLabelText(/nombres para sumar al roster/i), {
+      target: { value: names },
+    })
+    fireEvent.click(screen.getByRole('button', { name: /sumar al roster/i }))
+  }
+
+  it('el roster carga al pozo solo a los que vinieron', () => {
+    render(<App />)
+    loadRoster('Kaiser\nNyx\nMel')
+
+    // Nyx no vino: se destilda y no entra al sorteo.
+    fireEvent.click(screen.getByRole('checkbox', { name: /nyx/i }))
+    fireEvent.click(screen.getByRole('button', { name: /cargar 2 al pozo/i }))
+
+    const pool = within(screen.getByRole('heading', { name: /integrantes/i }).closest('section')!)
+    expect(pool.getAllByRole('listitem')).toHaveLength(2)
+    expect(pool.queryByText('Nyx')).not.toBeInTheDocument()
+  })
+
+  it('destildar a alguien NO lo borra del clan', () => {
+    render(<App />)
+    loadRoster('Kaiser\nNyx')
+    fireEvent.click(screen.getByRole('checkbox', { name: /nyx/i }))
+
+    expect(screen.getByRole('checkbox', { name: /nyx/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /roster \(2\)/i })).toBeInTheDocument()
+  })
+
+  it('el roster SOBREVIVE a Reiniciar y a una recarga', () => {
+    const first = render(<App />)
+    loadRoster('Kaiser\nNyx\nMel')
+    fireEvent.click(screen.getByRole('button', { name: /^cerrar$/i }))
+
+    vi.spyOn(globalThis, 'confirm').mockReturnValue(true)
+    fireEvent.click(screen.getByRole('button', { name: /reiniciar/i }))
+    expect(screen.getByRole('button', { name: /roster \(3\)/i })).toBeInTheDocument()
+    first.unmount()
+
+    render(<App />)
+    expect(screen.getByRole('button', { name: /roster \(3\)/i })).toBeInTheDocument()
+  })
+
   it('la musica arranca prendida y su estado se recuerda', () => {
     const first = render(<App />)
     expect(screen.getByRole('button', { name: /música/i })).toHaveAttribute(

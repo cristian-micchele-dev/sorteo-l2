@@ -1,9 +1,12 @@
+import { useState } from 'react'
 import { useRaffle } from './features/raffle/application/useRaffle'
 import { ItemsPanel } from './features/raffle/ui/ItemsPanel'
 import { ParticipantsPanel } from './features/raffle/ui/ParticipantsPanel'
 import { RouletteWheel } from './features/raffle/ui/RouletteWheel'
 import { WinnerAnnouncement } from './features/raffle/ui/WinnerAnnouncement'
 import { WinnersPanel } from './features/raffle/ui/WinnersPanel'
+import { useRoster } from './features/roster/application/useRoster'
+import { RosterDialog } from './features/roster/ui/RosterDialog'
 import { useBackgroundMusic } from './shared/lib/useBackgroundMusic'
 import { Button } from './shared/ui/Button'
 
@@ -21,6 +24,8 @@ interface AppProps {
 
 export const App = ({ onLogOut }: AppProps = {}) => {
   const { state, phase, canSpin, nextItem, actions } = useRaffle()
+  const { roster, presentNames, actions: rosterActions } = useRoster()
+  const [rosterOpen, setRosterOpen] = useState(false)
   const { musicOn, toggleMusic } = useBackgroundMusic()
   const locked = state.status !== 'idle'
 
@@ -62,6 +67,9 @@ export const App = ({ onLogOut }: AppProps = {}) => {
             <br />
             Nadie gana dos veces.
           </p>
+          <Button onClick={() => setRosterOpen(true)} disabled={locked}>
+            Roster ({roster.length})
+          </Button>
           <Button
             onClick={toggleMusic}
             aria-pressed={musicOn}
@@ -158,6 +166,23 @@ export const App = ({ onLogOut }: AppProps = {}) => {
         El anuncio tapa todo a propósito: cuando se paga un item, eso es lo
         único que importa en la pantalla.
       */}
+      {rosterOpen && (
+        <RosterDialog
+          roster={roster}
+          presentNames={presentNames}
+          locked={locked}
+          onAdd={rosterActions.add}
+          onRemove={rosterActions.remove}
+          onToggle={rosterActions.toggle}
+          onMarkAll={rosterActions.markAll}
+          onLoadPool={() => {
+            actions.addParticipants(presentNames.join('\n'))
+            setRosterOpen(false)
+          }}
+          onClose={() => setRosterOpen(false)}
+        />
+      )}
+
       {phase === 'revealing' && state.spotlight && (
         <WinnerAnnouncement
           winner={state.spotlight}

@@ -14,13 +14,14 @@ npm run typecheck  # tsc --noEmit
 ## Cómo se usa
 
 1. Pegá los items del botín (uno por línea o separados por comas).
-2. Pegá la lista de integrantes de la misma forma.
+2. **Roster** guarda la lista del clan una sola vez. Destildá a quien no vino y **Cargar al pozo** suma sólo a los presentes. También podés pegar integrantes a mano en su panel.
 3. Tocá la ruleta para girar. Se sortea el primer item de la cola.
 4. Cuando frena, el ganador aparece en grande a pantalla completa. **Continuar** cierra el anuncio y pasa al siguiente item — no se cierra solo, para que el clan alcance a leerlo.
 5. Al terminar, **Copiar reparto** deja el resultado en texto plano para pegarlo donde el clan lo pueda auditar.
 6. **Reiniciar** limpia la mesa para el próximo raid. No se guarda nada: el reparto se hace en el momento y el registro queda en el Discord.
 
 El sorteo en curso se guarda en `localStorage`: si se recarga la página en medio del reparto, no se pierde nada.
+El **roster vive en su propia clave**, así que Reiniciar no lo toca: un reparto va y viene, el clan queda.
 El botón `↺` de cada ganador deshace la asignación (devuelve el item a la cola y la persona al pozo).
 
 ## Publicar
@@ -70,4 +71,7 @@ src/features/raffle/
 ├─ domain/        lógica pura del sorteo — CERO imports de React
 ├─ application/   useRaffle: reducer + reloj de la animación + persistencia
 └─ ui/            presentacionales: props entran, eventos salen
+
+src/features/auth/      login por contraseña
+src/features/roster/    lista estable del clan y asistencia
 ```
