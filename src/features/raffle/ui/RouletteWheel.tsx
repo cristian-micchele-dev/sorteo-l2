@@ -41,7 +41,8 @@ const slicePath = (index: number, slices: number): string => {
  * límite baja a medida que crece la cantidad de sectores.
  */
 const fitName = (name: string, slices: number): string => {
-  const max = slices <= 8 ? 15 : slices <= 14 ? 12 : slices <= 24 ? 11 : 10
+  if (slices <= 8) return name.length > 15 ? `${name.slice(0, 14)}…` : name
+  const max = slices <= 14 ? 12 : slices <= 24 ? 11 : slices <= 40 ? 10 : 8
   return name.length > max ? `${name.slice(0, max - 1)}…` : name
 }
 
@@ -50,11 +51,14 @@ const labelSize = (slices: number): number => {
   if (slices <= 16) return 11
   if (slices <= 24) return 9.5
   if (slices <= 32) return 8
-  return 7
+  if (slices <= 44) return 7
+  if (slices <= 54) return 6.2
+  return 5.6
 }
 
 /** Con muchos sectores un borde grueso se come el color. */
-const sliceStroke = (slices: number): number => (slices <= 24 ? 1.5 : 0.8)
+const sliceStroke = (slices: number): number =>
+  slices <= 24 ? 1.5 : slices <= 44 ? 0.8 : 0.5
 
 export const RouletteWheel = ({
   participants,
@@ -96,7 +100,7 @@ export const RouletteWheel = ({
         disabled={!canSpin}
         onClick={onSpin}
         aria-label="Girar la ruleta"
-        className="group relative aspect-square w-[17rem] rounded-full transition-transform duration-200 focus-visible:ring-2 focus-visible:ring-adena focus-visible:outline-none enabled:hover:scale-[1.02] disabled:cursor-not-allowed sm:w-[23rem]"
+        className="group relative aspect-square w-[17rem] rounded-full xl:w-[27rem] transition-transform duration-200 focus-visible:ring-2 focus-visible:ring-adena focus-visible:outline-none enabled:hover:scale-[1.02] disabled:cursor-not-allowed sm:w-[23rem]"
       >
         {/* Puntero fijo: la ruleta gira, él no. Marca los cero grados. */}
         <span className="absolute top-0 left-1/2 z-30 -translate-x-1/2 -translate-y-1.5">

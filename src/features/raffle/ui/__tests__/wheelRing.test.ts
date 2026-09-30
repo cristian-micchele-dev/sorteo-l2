@@ -18,19 +18,19 @@ describe('buildRing', () => {
     expect(buildRing(pool(5), null).winnerSlot).toBe(-1)
   })
 
-  it('un clan de 35 entra ENTERO en la rueda, nadie queda afuera del dibujo', () => {
-    const participants = pool(35)
+  it('un clan de 48 entra ENTERO en la rueda, nadie queda afuera del dibujo', () => {
+    const participants = pool(48)
     expect(buildRing(participants, null).slices).toEqual(participants)
-    expect(buildRing(participants, 'p34').winnerSlot).toBe(34)
+    expect(buildRing(participants, 'p47').winnerSlot).toBe(47)
   })
 
   it('con mas integrantes que sectores recorta al maximo', () => {
-    expect(buildRing(pool(60), null).slices).toHaveLength(MAX_SLICES)
+    expect(buildRing(pool(90), null).slices).toHaveLength(MAX_SLICES)
   })
 
-  it('con 60 integrantes el ganador SIEMPRE entra en la ruleta', () => {
-    for (let i = 0; i < 60; i++) {
-      const ring = buildRing(pool(60), `p${i}`)
+  it('con 90 integrantes el ganador SIEMPRE entra en la ruleta', () => {
+    for (let i = 0; i < 90; i++) {
+      const ring = buildRing(pool(90), `p${i}`)
       expect(ring.slices).toHaveLength(MAX_SLICES)
       expect(ring.winnerSlot).toBeGreaterThanOrEqual(0)
       expect(ring.slices[ring.winnerSlot]!.id).toBe(`p${i}`)
@@ -38,7 +38,7 @@ describe('buildRing', () => {
   })
 
   it('no repite nombres dentro de la ruleta', () => {
-    const ring = buildRing(pool(60), 'p57')
+    const ring = buildRing(pool(90), 'p87')
     expect(new Set(ring.slices.map((s) => s.id)).size).toBe(MAX_SLICES)
   })
 

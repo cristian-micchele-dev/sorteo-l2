@@ -2,11 +2,13 @@ import type { Participant } from '../domain/types'
 
 /**
  * Tope de sectores dibujados. El texto corre A LO LARGO del radio, así que
- * lo que lo limita es el ANCHO del sector, no su largo: con 40 sectores el
- * arco sigue midiendo unos 28px donde arranca el nombre, de sobra para la
- * tipografía chica. Un clan de 30 o 35 entra entero.
+ * lo que lo limita es el ANCHO del sector, no su largo.
+ *
+ * Con 64 entra un clan grande completo: nadie tiene que preguntar por qué no
+ * se ve en la rueda. Los nombres quedan chicos, pero verse importa más que
+ * poder leer el de al lado — al ganador se lo anuncia aparte y en grande.
  */
-export const MAX_SLICES = 40
+export const MAX_SLICES = 64
 
 /**
  * Diez colores para los sectores: diez matices repartidos cada 36° del
