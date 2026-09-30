@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
   addMembers,
   presentNames,
@@ -67,9 +67,18 @@ export const useRoster = () => {
     setRoster((current) => setAllPresent(current, present))
   }, [])
 
-  return {
-    roster,
-    presentNames: presentNames(roster),
-    actions: { add, remove, toggle, markAll },
-  }
+  /*
+   * Sin este memo, cada render de App recorría los 40+ integrantes para
+   * recalcular los presentes y devolvía objetos nuevos, lo que impide
+   * memoizar cualquier cosa que reciba estas props.
+   */
+  const actions = useMemo(
+    () => ({ add, remove, toggle, markAll }),
+    [add, remove, toggle, markAll],
+  )
+
+  return useMemo(
+    () => ({ roster, presentNames: presentNames(roster), actions }),
+    [roster, actions],
+  )
 }

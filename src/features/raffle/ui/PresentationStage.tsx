@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Button } from '../../../shared/ui/Button'
+import { ClanCrestInline } from '../../../shared/ui/ClanCrest'
 import type { Item, Participant, RafflePhase, Winner } from '../domain/types'
 import { RouletteWheel } from './RouletteWheel'
 
@@ -57,12 +58,7 @@ export const PresentationStage = ({
   return (
     <div className="fixed inset-0 z-40 flex flex-col overflow-hidden bg-obsidian/92 backdrop-blur-sm">
       <header className="flex shrink-0 items-center justify-between gap-4 border-b border-steel/60 px-5 py-2.5">
-        <div className="flex items-center gap-3">
-          <img src="/clan-logo.png" width={80} height={40} alt="" className="h-8 w-auto" />
-          <span className="title-sheen font-display text-base font-bold tracking-[0.22em] uppercase">
-            Black Templars
-          </span>
-        </div>
+        <ClanCrestInline />
         <Button onClick={onExit} title="Salir del modo presentación (Escape)">
           Salir
         </Button>

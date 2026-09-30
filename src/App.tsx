@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useRaffle } from "./features/raffle/application/useRaffle";
 import { ItemsPanel } from "./features/raffle/ui/ItemsPanel";
 import { ParticipantsPanel } from "./features/raffle/ui/ParticipantsPanel";
+import { AppToolbar } from "./features/raffle/ui/AppToolbar";
 import { PresentationStage } from "./features/raffle/ui/PresentationStage";
 import { RouletteWheel } from "./features/raffle/ui/RouletteWheel";
 import { WinnerAnnouncement } from "./features/raffle/ui/WinnerAnnouncement";
@@ -9,7 +10,7 @@ import { WinnersPanel } from "./features/raffle/ui/WinnersPanel";
 import { useRoster } from "./features/roster/application/useRoster";
 import { RosterDialog } from "./features/roster/ui/RosterDialog";
 import { useBackgroundMusic } from "./shared/lib/useBackgroundMusic";
-import { Button } from "./shared/ui/Button";
+import { ClanCrestHeading } from "./shared/ui/ClanCrest";
 
 const phaseHint = {
   empty: "Cargá items e integrantes para armar el sorteo.",
@@ -41,92 +42,24 @@ export const App = ({ onLogOut }: AppProps = {}) => {
       {!onStage && (
         <>
           <header className="flex flex-wrap items-end justify-between gap-3 border-b border-steel/60 pb-3">
-            <div>
-              {/*
-            El logo va con alt vacío a propósito: "Black Templars" ya está
-            escrito en el subtítulo, y repetirlo en el alt haría que un lector
-            de pantalla lo lea dos veces.
-          */}
-              <h1 className="flex flex-col items-start gap-1.5">
-                <img
-                  src="/clan-logo.png"
-                  width={80}
-                  height={40}
-                  alt=""
-                  className="animate-crest h-10 w-auto"
-                />
-                <span className="title-sheen font-display text-xl leading-none font-bold tracking-[0.16em] uppercase sm:text-2xl">
-                  Black Templars
-                </span>
-              </h1>
-              {/* Las cruces son adorno: un lector de pantalla lee sólo el lema. */}
-              <p className="mt-1.5 flex items-center gap-1.5 text-xs tracking-wide text-ash italic">
-                <span
-                  aria-hidden="true"
-                  className="text-sm not-italic text-crimson"
-                >
-                  ✠
-                </span>
-                El miedo No cruza este estandarte
-                <span
-                  aria-hidden="true"
-                  className="text-sm not-italic text-crimson"
-                >
-                  ✠
-                </span>
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <p className="hidden text-right text-[0.6875rem] leading-tight text-ash/60 sm:block">
-                Azar criptográfico, sin sesgo.
-                <br />
-                Nadie gana dos veces.
-              </p>
-              <Button
-                variant="primary"
-                disabled={phase !== "ready"}
-                onClick={() => setOnStage(true)}
-                title="Agranda la ruleta y esconde los paneles, para transmitir"
-              >
-                Presentación
-              </Button>
-              <Button onClick={() => setRosterOpen(true)} disabled={locked}>
-                Roster ({roster.length})
-              </Button>
-              <Button
-                onClick={toggleMusic}
-                aria-pressed={musicOn}
-                title={
-                  musicOn
-                    ? "Apagar la música de fondo"
-                    : "Encender la música de fondo"
+            <ClanCrestHeading />
+            <AppToolbar
+              rosterCount={roster.length}
+              canPresent={phase === "ready"}
+              locked={locked}
+              musicOn={musicOn}
+              onPresent={() => setOnStage(true)}
+              onOpenRoster={() => setRosterOpen(true)}
+              onToggleMusic={toggleMusic}
+              onLogOut={onLogOut}
+              onReset={() => {
+                if (
+                  globalThis.confirm("¿Borrar items, integrantes y ganadores?")
+                ) {
+                  actions.reset();
                 }
-              >
-                {musicOn ? "♪ Música" : "Sin música"}
-              </Button>
-              {onLogOut && (
-                <Button
-                  onClick={onLogOut}
-                  title="Cerrar sesión y volver al login"
-                >
-                  Salir
-                </Button>
-              )}
-              <Button
-                variant="danger"
-                disabled={locked}
-                onClick={() => {
-                  if (
-                    globalThis.confirm(
-                      "¿Borrar items, integrantes y ganadores?",
-                    )
-                  )
-                    actions.reset();
-                }}
-              >
-                Reiniciar
-              </Button>
-            </div>
+              }}
+            />
           </header>
 
           <main className="grid flex-1 grid-cols-1 items-start gap-4 lg:grid-cols-[minmax(240px,1fr)_minmax(340px,1.4fr)_minmax(260px,1fr)]">
