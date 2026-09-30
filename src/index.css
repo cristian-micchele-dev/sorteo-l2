@@ -108,12 +108,16 @@
   /*
    * En una ruleta los nombres GIRAN con sus sectores, así que alcanza con
    * rotar el plato entero: una sola transición, sin contra-rotaciones.
-   * La curva frena fuerte al final, como una rueda que pierde inercia.
+   *
+   * La curva es un ease-out de cuarto grado, que imita la inercia de una
+   * rueda real: sigue rápida un buen rato y recién después frena. Una curva
+   * muy adelantada (tipo 0.12, 0.85) mete todo el giro en los primeros
+   * milisegundos y se ve un latigazo, no una rueda girando.
    */
   .wheel {
     /* La duración llega inline desde SPIN_DURATION_MS. */
     transition-property: transform;
-    transition-timing-function: cubic-bezier(0.12, 0.85, 0.05, 1);
+    transition-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
     transform-origin: center;
     will-change: transform;
   }

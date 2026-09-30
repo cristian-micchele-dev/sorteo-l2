@@ -84,12 +84,12 @@ describe('nextWheelAngle', () => {
     }
   })
 
-  it('gira entre DOS y TRES vueltas: ni un tironcito ni una eternidad', () => {
+  it('gira entre CINCO y SEIS vueltas: ni un tironcito ni una eternidad', () => {
     for (let slices = 2; slices <= MAX_SLICES; slices++) {
       for (let slot = 0; slot < slices; slot++) {
         const turned = nextWheelAngle(0, slot, slices)
-        expect(turned).toBeGreaterThanOrEqual(720)
-        expect(turned).toBeLessThan(1080)
+        expect(turned).toBeGreaterThanOrEqual(1800)
+        expect(turned).toBeLessThan(2160)
       }
     }
   })

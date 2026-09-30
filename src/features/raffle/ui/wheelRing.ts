@@ -51,11 +51,11 @@ export const sliceColor = (index: number, slices: number): string => {
 /**
  * Vueltas completas garantizadas antes de frenar.
  *
- * Con 2, el giro total queda entre DOS y TRES vueltas: las vueltas fijas más
- * lo que falte para alcanzar al sector ganador. Esa variación es gratis y
- * hace que no se sienta siempre igual.
+ * Con 5, el giro total queda entre CINCO y SEIS vueltas: las vueltas fijas
+ * más lo que falte para alcanzar al sector ganador. Esa variación es gratis
+ * y hace que no se sienta siempre igual.
  */
-const FULL_SPINS = 2
+const FULL_SPINS = 5
 
 export interface WheelRing {
   readonly slices: readonly Participant[]
