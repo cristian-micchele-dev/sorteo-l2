@@ -199,6 +199,52 @@ describe('flujo completo del sorteo', () => {
     expect(screen.getByRole('button', { name: /roster \(3\)/i })).toBeInTheDocument()
   })
 
+  const enterStage = () =>
+    fireEvent.click(screen.getByRole('button', { name: /presentación/i }))
+
+  it('el modo presentacion esconde los paneles de carga', () => {
+    render(<App />)
+    expect(screen.getByRole('button', { name: /presentación/i })).toBeDisabled()
+
+    load('Draco Leather', 'Kaiser\nNyx')
+    enterStage()
+
+    // Los formularios de carga ya no estan en pantalla.
+    expect(screen.queryByRole('button', { name: /cargar items/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /anotar integrantes/i })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /girar la ruleta/i })).toBeInTheDocument()
+  })
+
+  it('Espacio gira y Escape sale del escenario', () => {
+    render(<App />)
+    load('Draco Leather', 'Kaiser')
+    enterStage()
+
+    fireEvent.keyDown(document, { key: ' ' })
+    act(() => {
+      vi.advanceTimersByTime(SPIN_DURATION_MS + 50)
+    })
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /continuar/i }))
+
+    fireEvent.keyDown(document, { key: 'Escape' })
+    expect(screen.getByRole('button', { name: /cargar items/i })).toBeInTheDocument()
+  })
+
+  it('Espacio NO gira cuando se esta escribiendo en un campo', () => {
+    render(<App />)
+    load('Draco Leather', 'Kaiser\nNyx')
+    enterStage()
+
+    const textarea = document.createElement('textarea')
+    document.body.append(textarea)
+    fireEvent.keyDown(textarea, { key: ' ' })
+    textarea.remove()
+
+    // Sigue sin girar: el pozo esta intacto.
+    expect(screen.getByRole('button', { name: /girar la ruleta/i })).toBeEnabled()
+  })
+
   it('la musica arranca prendida y su estado se recuerda', () => {
     const first = render(<App />)
     expect(screen.getByRole('button', { name: /música/i })).toHaveAttribute(

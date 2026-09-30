@@ -9,6 +9,8 @@ interface RouletteWheelProps {
   readonly spotlight: Winner | null
   readonly canSpin: boolean
   readonly onSpin: () => void
+  /** En el escenario la rueda manda: crece con el alto de la pantalla. */
+  readonly stage?: boolean
 }
 
 const RIM = 190
@@ -66,6 +68,7 @@ export const RouletteWheel = ({
   spotlight,
   canSpin,
   onSpin,
+  stage = false,
 }: RouletteWheelProps) => {
   const [angle, setAngle] = useState(0)
 
@@ -100,7 +103,9 @@ export const RouletteWheel = ({
         disabled={!canSpin}
         onClick={onSpin}
         aria-label="Girar la ruleta"
-        className="group relative aspect-square w-[17rem] rounded-full xl:w-[27rem] transition-transform duration-200 focus-visible:ring-2 focus-visible:ring-adena focus-visible:outline-none enabled:hover:scale-[1.02] disabled:cursor-not-allowed sm:w-[23rem]"
+        className={`group relative aspect-square rounded-full transition-transform duration-200 focus-visible:ring-2 focus-visible:ring-adena focus-visible:outline-none enabled:hover:scale-[1.02] disabled:cursor-not-allowed ${
+          stage ? 'w-[min(72vh,44rem)]' : 'w-[17rem] sm:w-[23rem] xl:w-[27rem]'
+        }`}
       >
         {/* Puntero fijo: la ruleta gira, él no. Marca los cero grados. */}
         <span className="absolute top-0 left-1/2 z-30 -translate-x-1/2 -translate-y-1.5">
@@ -174,7 +179,11 @@ export const RouletteWheel = ({
 
         {/* El agujero del centro: qué hacer, o quién ganó. */}
         <span className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center">
-          <span className="flex size-28 flex-col items-center justify-center gap-0.5 rounded-full border-2 border-steel bg-obsidian px-2 text-center shadow-[0_0_28px_rgba(0,0,0,0.95)] sm:size-32">
+          <span
+            className={`flex flex-col items-center justify-center gap-0.5 rounded-full border-2 border-steel bg-obsidian px-2 text-center shadow-[0_0_28px_rgba(0,0,0,0.95)] ${
+              stage ? 'size-40 sm:size-48' : 'size-28 sm:size-32'
+            }`}
+          >
             {isRevealing && spotlight ? (
               <span className="animate-slam font-display text-sm leading-tight font-bold break-words text-adena-bright sm:text-base">
                 {spotlight.participant.name}

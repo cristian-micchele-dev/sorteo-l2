@@ -15,10 +15,11 @@ npm run typecheck  # tsc --noEmit
 
 1. Pegá los items del botín (uno por línea o separados por comas).
 2. **Roster** guarda la lista del clan una sola vez. Destildá a quien no vino y **Cargar al pozo** suma sólo a los presentes. También podés pegar integrantes a mano en su panel.
-3. Tocá la ruleta para girar. Se sortea el primer item de la cola.
-4. Cuando frena, el ganador aparece en grande a pantalla completa. **Continuar** cierra el anuncio y pasa al siguiente item — no se cierra solo, para que el clan alcance a leerlo.
-5. Al terminar, **Copiar reparto** deja el resultado en texto plano para pegarlo donde el clan lo pueda auditar.
-6. **Reiniciar** limpia la mesa para el próximo raid. No se guarda nada: el reparto se hace en el momento y el registro queda en el Discord.
+3. **Presentación** agranda la ruleta y esconde los paneles de carga — es el modo para transmitir por Discord. **Espacio** gira, **Escape** sale.
+4. Tocá la ruleta (o Espacio) para girar. Se sortea el primer item de la cola.
+5. Cuando frena, el ganador aparece en grande a pantalla completa. **Continuar** cierra el anuncio y pasa al siguiente item — no se cierra solo, para que el clan alcance a leerlo.
+6. Al terminar, **Copiar reparto** deja el resultado en texto plano para pegarlo donde el clan lo pueda auditar.
+7. **Reiniciar** limpia la mesa para el próximo raid. No se guarda nada: el reparto se hace en el momento y el registro queda en el Discord.
 
 El sorteo en curso se guarda en `localStorage`: si se recarga la página en medio del reparto, no se pierde nada.
 El **roster vive en su propia clave**, así que Reiniciar no lo toca: un reparto va y viene, el clan queda.
